@@ -12,7 +12,8 @@ public static class ValidacaoTexto
     /// <returns><see langword="true"/> quando o valor possui conteúdo; caso contrário, <see langword="false"/>.</returns>
     public static bool EhValido(this string? valor)
     {
+        //teste
         return !string.IsNullOrWhiteSpace(valor);
-        
+
     }
 }
