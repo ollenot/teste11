@@ -81,12 +81,14 @@ async function reviewDiff(diff, options = {}) {
       baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
     });
     resolvedModel = model === 'llama-3.3-70b-versatile' ? 'gemini-1.5-flash' : model;
+    console.log(`[AI Code Review] Provedor: Gemini | Modelo: ${resolvedModel}`);
   } else if (groqApiKey) {
     // Groq — plano gratuito, API compatível com OpenAI
     client = new OpenAI({
       apiKey: groqApiKey,
       baseURL: 'https://api.groq.com/openai/v1',
     });
+    console.log(`[AI Code Review] Provedor: Groq | Modelo: ${resolvedModel}`);
   } else if (azureEndpoint && azureApiKey) {
     // Azure OpenAI
     const { AzureOpenAI } = require('openai');
@@ -96,9 +98,11 @@ async function reviewDiff(diff, options = {}) {
       apiVersion: '2024-02-01',
     });
     resolvedModel = azureDeployment || 'gpt-4o';
+    console.log(`[AI Code Review] Provedor: Azure OpenAI | Modelo: ${resolvedModel}`);
   } else if (apiKey) {
     // OpenAI padrão
     client = new OpenAI({ apiKey });
+    console.log(`[AI Code Review] Provedor: OpenAI | Modelo: ${resolvedModel}`);
   } else {
     throw new Error(
       'Nenhuma credencial de IA encontrada.\n' +
