@@ -13,5 +13,6 @@ public static class ValidacaoTexto
     public static bool EhValido(this string? valor)
     {
         return !string.IsNullOrWhiteSpace(valor);
+        
     }
 }
