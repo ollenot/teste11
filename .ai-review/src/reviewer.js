@@ -66,14 +66,22 @@ async function reviewDiff(diff, options = {}) {
     azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT,
     azureApiKey = process.env.AZURE_OPENAI_API_KEY,
     groqApiKey = process.env.GROQ_API_KEY,
+    geminiApiKey = process.env.GEMINI_API_KEY,
     architectureFilePath = process.env.ARCHITECTURE_FILE,
   } = options;
 
-  // Seleciona o provedor (prioridade: Groq → Azure → OpenAI)
+  // Seleciona o provedor (prioridade: Gemini → Groq → Azure → OpenAI)
   let client;
   let resolvedModel = model;
 
-  if (groqApiKey) {
+  if (geminiApiKey) {
+    // Gemini — camada de compatibilidade com a API do OpenAI
+    client = new OpenAI({
+      apiKey: geminiApiKey,
+      baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+    });
+    resolvedModel = model === 'llama-3.3-70b-versatile' ? 'gemini-1.5-flash' : model;
+  } else if (groqApiKey) {
     // Groq — plano gratuito, API compatível com OpenAI
     client = new OpenAI({
       apiKey: groqApiKey,
@@ -94,7 +102,7 @@ async function reviewDiff(diff, options = {}) {
   } else {
     throw new Error(
       'Nenhuma credencial de IA encontrada.\n' +
-        'Defina GROQ_API_KEY (gratuito: https://console.groq.com) ou OPENAI_API_KEY no arquivo .env.\n' +
+        'Defina GROQ_API_KEY (gratuito: https://console.groq.com), GEMINI_API_KEY (https://aistudio.google.com/apikey) ou OPENAI_API_KEY no arquivo .env.\n' +
         'Consulte .env.example para detalhes.'
     );
   }
